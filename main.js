@@ -5,6 +5,7 @@ var qs = require('querystring');
 var template = require('./module/template.js');
 var path = require('path');
 var app = http.createServer(function (request, response) {
+  console.log('New Request');
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
@@ -15,7 +16,7 @@ var app = http.createServer(function (request, response) {
         filteredId = undefined;
     }
     if (pathname === '/') {
-        if (filteredId === undefined) {
+        if (filteredId == undefined || filteredId == 'Welcome') {
             fs.readdir('./data', function (error, filelist) {
                 var title = 'Welcome';
                 var description = fs.readFileSync('./data/Welcome', 'utf8');
@@ -89,9 +90,11 @@ var app = http.createServer(function (request, response) {
             var post = qs.parse(body);
             var title = post.title;
             var description = post.description;
-            var __description = description.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, "&apos;");
+            var __description = description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, "&apos;");
             fs.writeFile(`data/${title}`, __description, 'utf8', function (err) {
-                response.writeHead(302, { Location: `/?id=${title}` });
+                response.writeHead(302, {
+                  'Location': `/?id=${title}`
+                });
                 response.end();
             });
         });
@@ -131,7 +134,9 @@ var app = http.createServer(function (request, response) {
             var __description = description.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, "&apos;");
             fs.rename(`./data/${id}`, `./data/${title}`, function (err) {
                 fs.writeFile(`./data/${title}`, __description, function (err) {
-                    response.writeHead(302, { Location: `/?id=${title}` });
+                    response.writeHead(302, {
+                    'Location': '/?id=' + title
+                    });
                     response.end();
                 });
             });
@@ -146,7 +151,7 @@ var app = http.createServer(function (request, response) {
             var id = post.id;
             var filterdId = path.parse(id).base;
             fs.unlink(`./data/${filterdId}`, function (err) {
-                response.writeHead(302, { Location: `/` });
+                response.writeHead(302, { 'Location': `/` });
                 response.end();
             });
         });
@@ -172,7 +177,7 @@ var app = http.createServer(function (request, response) {
         });
     } else {
         response.writeHead(404);
-        response.end('404 Not found');
+        response.end('<h1>404 Not found</h1><a href="/">Home</a>');
     }
 });
 app.listen(1337);
