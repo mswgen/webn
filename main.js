@@ -67,14 +67,23 @@ var app = http.createServer(function (request, response) {
             var title = 'WEB - create';
             var __list = template.list(filelist);
             var __template = template.html(title, __list, `
-          <form action="/create_process" method="post">
+          <form action="/create_process" method="post" onsubmit="
+                if(yes){
+                    return true;
+                } else {
+                    return false;
+                }
+          ">
             <p>All the HTML tags won't work in this document.</p>
             <p><input type="text" name="title" placeholder="title"></p>
             <p>
-              <textarea name="description" placeholder="description"></textarea>
+                <textarea name="description" placeholder="description"></textarea>
             </p>
             <p>
-              <input type="submit">
+                <div id="html_element"></div>
+            </p>
+            <p>
+                <input type="submit">
             </p>
           </form>
         `, '');
@@ -105,12 +114,21 @@ var app = http.createServer(function (request, response) {
                 var __list = template.list(filelist);
                 var __template = template.html(title, __list,
                     `
-            <form action="/update_process" method="post">
+            <form action="/update_process" method="post" onsubmit="
+                if(yes){
+                    return true;
+                } else {
+                    return false;
+                }
+              ">
               <p>All the HTML tags won't work in this document.</p>
               <input type="hidden" name="id" value="${title}">
               <p><input type="text" name="title" placeholder="title" value="${title}"></p>
               <p>
                 <textarea name="description" placeholder="description">${description}</textarea>
+              </p>
+              <p>
+                <div id="html_element"></div>
               </p>
               <p>
                 <input type="submit">
